@@ -2,6 +2,7 @@
 
 import { useState, useSyncExternalStore } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ShoppingBag, Menu, X } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { useCartStore } from "@/lib/store/cart";
@@ -23,12 +24,18 @@ function useIsClient(): boolean {
 }
 
 export function Header() {
+  const pathname = usePathname();
   const isClient = useIsClient();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const itemCount = useCartStore((state) =>
     state.items.reduce((sum, i) => sum + i.quantity, 0),
   );
+
+  // The admin area renders its own chrome; never show the public header there.
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
 
   return (
     <header className="sticky top-0 z-50 border-b border-brown/10 bg-cream-50/95 backdrop-blur-sm">
