@@ -27,9 +27,9 @@ export async function getSessionClaims(): Promise<SessionClaims | null> {
 /**
  * Guard for admin-only server code (layouts, pages, server actions).
  * Returns the claims when the caller is an authenticated ADMIN, otherwise
- * redirects to the login page. This is defense in depth: middleware already
+ * redirects to the login page. This is defense in depth: the proxy already
  * gates routing, but every privileged server action must call this too and
- * never trust the middleware alone.
+ * never trust the proxy alone.
  */
 export async function requireAdmin(): Promise<SessionClaims> {
   const claims = await getSessionClaims();

@@ -31,12 +31,14 @@ export async function getSiteSettings(): Promise<SiteSettings> {
     const rows = await prisma.setting.findMany();
     const map = Object.fromEntries(rows.map((r) => [r.key, r.value]));
     return {
+      // DB stores snake_case keys (see prisma/seed.ts and lib/data/admin/settings.ts);
+      // map them onto the camelCase app-facing SiteSettings shape.
       whatsapp: map["whatsapp"] ?? DEFAULTS.whatsapp,
-      whatsappDisplay: map["whatsappDisplay"] ?? DEFAULTS.whatsappDisplay,
+      whatsappDisplay: map["whatsapp_display"] ?? DEFAULTS.whatsappDisplay,
       instagram: map["instagram"] ?? DEFAULTS.instagram,
       address: map["address"] ?? DEFAULTS.address,
-      heroTitle: map["heroTitle"] ?? DEFAULTS.heroTitle,
-      heroSubtitle: map["heroSubtitle"] ?? DEFAULTS.heroSubtitle,
+      heroTitle: map["hero_title"] ?? DEFAULTS.heroTitle,
+      heroSubtitle: map["hero_subtitle"] ?? DEFAULTS.heroSubtitle,
       slogan: map["slogan"] ?? DEFAULTS.slogan,
       hours: map["hours"] ?? DEFAULTS.hours,
     };

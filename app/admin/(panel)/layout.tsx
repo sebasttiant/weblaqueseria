@@ -6,7 +6,7 @@ import { AdminShell } from "@/components/admin/AdminShell";
 export default async function PanelLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  // Defense in depth: middleware already gated this route, but the layout
+  // Defense in depth: the proxy already gated this route, but the layout
   // re-verifies on the server before rendering any admin content.
   const claims = await requireAdmin();
 

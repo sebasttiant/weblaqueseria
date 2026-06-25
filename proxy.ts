@@ -6,14 +6,15 @@ const LOGIN_PATH = "/admin/login";
 const ADMIN_ROLE = "ADMIN";
 
 /**
- * Edge middleware that gates the /admin area.
+ * Proxy that gates the /admin area (Next 16 renamed `middleware` to `proxy`;
+ * the proxy runtime is `nodejs`, not edge).
  *
- * It only verifies the signed session JWT with jose (edge-safe) — it never
- * touches Prisma or any Node-only API. The login route is always allowed
- * through so an unauthenticated user can reach the form. This is the first
- * layer of defense; server layouts/actions re-check via requireAdmin().
+ * It only verifies the signed session JWT with jose — it never touches Prisma
+ * or any data layer. The login route is always allowed through so an
+ * unauthenticated user can reach the form. This is the first layer of defense;
+ * server layouts/actions re-check via requireAdmin().
  */
-export async function middleware(request: NextRequest): Promise<NextResponse> {
+export async function proxy(request: NextRequest): Promise<NextResponse> {
   const { pathname } = request.nextUrl;
 
   if (pathname === LOGIN_PATH) {
