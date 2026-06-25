@@ -31,7 +31,9 @@ services:
       <<: *postgres-env
       POSTGRES_INITDB_ARGS: "--data-checksums"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      # Postgres 18 expects the mount at /var/lib/postgresql (data lives in a
+      # versioned subdir); mounting /var/lib/postgresql/data crash-loops on 18.
+      - pgdata:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 10s
@@ -69,11 +71,15 @@ services:
       - ALL
     logging: *default-logging
 
-  # One-shot seed. Behind the `seed` profile so `docker compose up` never runs
-  # it automatically — seeding (which can bootstrap the admin) is an explicit
-  # action: `docker compose --profile seed run --rm seed`.
+  # One-shot seed (idempotent generic data; admin only if ADMIN_* are set).
+  #
+  # LOCAL: `docker compose up -d --build` runs it automatically (it's a default
+  #   service that exits after seeding). Safe: no committed creds, admin is
+  #   skipped unless real ADMIN_* are provided, settings are create-only.
+  # PRODUCTION: deploy.sh brings up only `db` + `web` (named services), so seed
+  #   never runs on a deploy; it is invoked explicitly via deploy.sh --seed /
+  #   --bootstrap-admin (which runs `docker compose run --rm seed`).
   seed:
-    profiles: ["seed"]
     build:
       context: .
       target: seeder

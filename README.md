@@ -22,15 +22,17 @@ Copy the template below into `.env` (this repo ignores `.env*` except the
 example, and the file is intentionally git-ignored):
 
 ```dotenv
+# Placeholders only — replace EVERY value with a real secret. Never commit .env.
+
 # --- Postgres (compose `db` service) ---
-POSTGRES_USER=laqueseria
-POSTGRES_PASSWORD=change-me-strong-password
-POSTGRES_DB=laqueseria
+POSTGRES_USER=replace-with-db-user
+POSTGRES_PASSWORD=replace-with-a-strong-db-password
+POSTGRES_DB=replace-with-db-name
 
 # --- App ---
 # Session cookie secret (jose). MUST be >= 32 chars. Generate:
 #   openssl rand -base64 48
-AUTH_SECRET=change-me-at-least-32-characters-long-secret
+AUTH_SECRET=replace-with-a-32-plus-character-secret
 
 # Public canonical URL (SEO/metadata).
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
@@ -38,12 +40,15 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 # Host port the web container publishes (container always listens on 3000).
 WEB_PORT=3000
 
-# --- Admin bootstrap (only used when seeding/bootstrapping) ---
-# PLACEHOLDERS — replace with real values in your private .env / VPS secrets.
-# Never commit real admin credentials.
-ADMIN_EMAIL=admin@example.com
-ADMIN_PASSWORD=change-this-securely
+# --- Admin bootstrap (only read when seeding / --bootstrap-admin) ---
+# No committed defaults. deploy.sh and the seed reject known placeholder values.
+ADMIN_EMAIL=replace-with-admin-email@example.com
+ADMIN_PASSWORD=replace-with-a-strong-password
 ```
+
+> Both `deploy.sh --bootstrap-admin` and the seed **reject** these placeholder
+> values (and other obvious examples) — a real deploy must supply genuine
+> secrets.
 
 | Variable               | Used by            | Notes                                                        |
 | ---------------------- | ------------------ | ------------------------------------------------------------ |
@@ -89,43 +94,53 @@ pnpm lint && pnpm typecheck && pnpm build
 
 ---
 
-## Run the full stack (Docker)
+## Run locally (Docker) — one command
 
 ```bash
-docker compose build
-docker compose up -d        # db -> migrate -> web (ordered by health; NO seed)
+cp .env.example .env     # then fill in real values (see the env table above)
+docker compose up -d --build
 ```
+
+That's it. Compose builds and starts the whole stack in order:
+`db` (healthy) → `migrate` (applies migrations, exits) → `seed` (populates data,
+exits) → `web`.
 
 - Web: `http://localhost:${WEB_PORT:-3000}`
 - Health probe: `GET /api/health` → `200 {status:"ok",db:"up"}` (`503` if the DB is down)
-- `migrate` is a one-shot service: it applies migrations and exits. `web` only
+- `migrate` and `seed` are one-shot services (they run once and exit). `web`
   starts after migrations complete.
-- **`seed` does NOT run automatically.** It lives behind the `seed` profile so a
-  deploy can never mutate data or admin credentials by surprise. Run it
-  explicitly when needed (see below).
+- To get an **admin login locally**, set real `ADMIN_EMAIL` / `ADMIN_PASSWORD`
+  in `.env` (not placeholders — they are rejected). Otherwise the generic seed
+  still runs and admin bootstrap is simply skipped.
 
 Image targets (`Dockerfile`): `runner` (web), `migrator`
 (`prisma migrate deploy`), `seeder` (idempotent seed + admin bootstrap).
 
 ### Seeding & admin bootstrap (security)
 
-The seed is split into two concerns:
+The seed has two concerns:
 
 - **Generic data** (categories, products, settings) — idempotent and safe to
   run repeatedly. Existing `settings` are **never overwritten** (operators edit
   them from the admin panel), and categories/products are upserted.
 - **Admin bootstrap** — reads `ADMIN_EMAIL` / `ADMIN_PASSWORD` from the
-  environment. There are **no committed default credentials**. Behavior:
+  environment. There are **no committed default credentials**, and known
+  placeholder values are **rejected**. Behavior:
   - creds not set → admin bootstrap is **skipped** (generic seed still runs);
   - admin does not exist → it is **created**;
   - admin exists → password is **left unchanged**, unless
     `FORCE_ADMIN_PASSWORD_RESET=1` is explicitly provided.
 
-Run the seed manually (creds come from `.env`):
+Re-run the seed manually any time (creds come from `.env`):
 
 ```bash
-docker compose --profile seed run --rm seed
+docker compose run --rm seed
 ```
+
+> **Local vs production**: locally, `docker compose up` runs the seed for
+> convenience. On a VPS, `deploy.sh` brings up only `db` + `web`, so a deploy
+> **never** seeds or touches the admin unless you pass `--seed` /
+> `--bootstrap-admin`.
 
 ---
 

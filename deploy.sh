@@ -64,6 +64,36 @@ else
   die "docker compose is not available"
 fi
 
+# --- placeholder denylist ---------------------------------------------------
+# Known example/placeholder secrets that must never reach production. Kept in
+# sync with prisma/seed.ts. Matched case-insensitively. Values are never echoed.
+readonly PLACEHOLDER_VALUES=(
+  "change-me-locally"
+  "change-this-securely"
+  "replace-with-a-strong-password"
+  "replace-with-a-32-plus-character-secret"
+  "replace-with-admin-email@example.com"
+  "admin@laqueseria.co"
+  "admin@example.com"
+  "password"
+  "changeme"
+  "admin"
+)
+
+is_placeholder() {
+  local value; value="$(printf '%s' "$1" | tr '[:upper:]' '[:lower:]')"
+  local candidate
+  for candidate in "${PLACEHOLDER_VALUES[@]}"; do
+    [ "$value" = "$candidate" ] && return 0
+  done
+  return 1
+}
+
+# Read a key's value from the env file without printing it.
+env_value() {
+  grep -E "^$1=" "$ENV_FILE" | head -n1 | cut -d= -f2-
+}
+
 # --- preflight --------------------------------------------------------------
 preflight() {
   command -v docker >/dev/null 2>&1 || die "docker is not installed"
@@ -78,13 +108,26 @@ preflight() {
     fi
   done
 
-  # Admin bootstrap must fail fast (before any change) when creds are missing.
+  # Admin bootstrap must fail fast (before any change) when creds are missing
+  # OR still set to a known placeholder/example value.
   if [ "$DO_BOOTSTRAP_ADMIN" -eq 1 ]; then
     for key in ADMIN_EMAIL ADMIN_PASSWORD; do
       if ! grep -qE "^${key}=.+" "$ENV_FILE"; then
         die "--bootstrap-admin requires a non-empty $key in $ENV_FILE"
       fi
     done
+    local admin_email admin_password
+    admin_email="$(env_value ADMIN_EMAIL)"
+    admin_password="$(env_value ADMIN_PASSWORD)"
+    if is_placeholder "$admin_email"; then
+      die "--bootstrap-admin: ADMIN_EMAIL is still a placeholder — set a real email in $ENV_FILE"
+    fi
+    if is_placeholder "$admin_password"; then
+      die "--bootstrap-admin: ADMIN_PASSWORD is still a placeholder — set a real secret in $ENV_FILE"
+    fi
+    if [ "${#admin_password}" -lt 8 ]; then
+      die "--bootstrap-admin: ADMIN_PASSWORD must be at least 8 characters"
+    fi
   fi
 
   # The rollback path uses `git reset --hard`; refuse to run on a dirty tree so
@@ -223,7 +266,8 @@ main() {
       log "seeding (idempotent; admin bootstrapped only if creds present)…"
     fi
     # Compose auto-loads .env for ${ADMIN_EMAIL}/${ADMIN_PASSWORD} interpolation.
-    dc --profile seed run --rm seed
+    # `run` starts only the seed one-shot (plus its db/migrate deps), never web.
+    dc run --rm seed
   else
     log "skipping seed (default — pass --seed or --bootstrap-admin to enable)"
   fi
@@ -238,4 +282,7 @@ main() {
   ok "deploy complete — now on $(git rev-parse --short HEAD)"
 }
 
-main "$@"
+# Run main only when executed directly (sourcing for tests leaves it inert).
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+  main "$@"
+fi

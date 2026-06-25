@@ -156,6 +156,21 @@ async function seedSettings(): Promise<void> {
 const MIN_ADMIN_PASSWORD_LENGTH = 8;
 
 /**
+ * Known placeholder/example secrets that must never be accepted as a real
+ * admin password. Compared case-insensitively. Mirrors the denylist enforced
+ * by deploy.sh so neither path can bootstrap an admin with a sample value.
+ */
+const PLACEHOLDER_ADMIN_PASSWORDS = new Set<string>([
+  "change-me-locally",
+  "change-this-securely",
+  "replace-with-a-strong-password",
+  "replace-with-a-32-plus-character-secret",
+  "password",
+  "changeme",
+  "admin",
+]);
+
+/**
  * Bootstrap the initial admin user — security-sensitive.
  *
  * Rules:
@@ -183,6 +198,12 @@ async function seedAdmin(): Promise<void> {
   if (password.length < MIN_ADMIN_PASSWORD_LENGTH) {
     throw new Error(
       `ADMIN_PASSWORD must be at least ${MIN_ADMIN_PASSWORD_LENGTH} characters.`,
+    );
+  }
+
+  if (PLACEHOLDER_ADMIN_PASSWORDS.has(password.toLowerCase())) {
+    throw new Error(
+      "ADMIN_PASSWORD is a known placeholder/example value — set a real secret.",
     );
   }
 

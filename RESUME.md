@@ -26,13 +26,23 @@ All six layers are done. The full stack runs in Docker end-to-end.
 - Seeding is OFF by default in `deploy.sh`; the `seed` compose service is behind the `seed` profile.
 - Settings seed is create-only (won't clobber operator edits).
 
+## Run locally (one command)
+```
+cp .env.example .env   # fill REAL values (placeholders are rejected)
+docker compose up -d --build   # db -> migrate -> seed -> web
+```
+
 ## Deploy (on the VPS)
 ```
 cd weblaqueseria
 cp .env.example .env   # then fill in real values (see README env table)
-./deploy.sh                     # pull + migrate + web (no seed)
-./deploy.sh --bootstrap-admin   # first time: also create the admin (needs ADMIN_* in .env)
+./deploy.sh                     # pull + migrate + web (NO seed; never touches admin)
+./deploy.sh --bootstrap-admin   # first time: also create the admin (needs real ADMIN_* in .env)
 ```
+
+Note: Postgres 18 mount is `pgdata:/var/lib/postgresql` (NOT `/data`).
+Hardening: deploy.sh + seed reject placeholder secrets (change-me-locally,
+replace-with-*, admin@example.com, etc.).
 
 ## Remaining
 - Add the git remote and push so CI runs (no remote is configured in this clone):
