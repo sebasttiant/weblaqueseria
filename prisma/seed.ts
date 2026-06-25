@@ -171,6 +171,25 @@ const PLACEHOLDER_ADMIN_PASSWORDS = new Set<string>([
 ]);
 
 /**
+ * Known placeholder/example admin emails. Compared case-insensitively. Mirrors
+ * the denylist enforced by deploy.sh.
+ */
+const PLACEHOLDER_ADMIN_EMAILS = new Set<string>([
+  "admin@example.com",
+  "replace-with-admin-email@example.com",
+  "admin@laqueseria.co",
+]);
+
+/**
+ * A value is a placeholder if it carries the shipped "replace-with" marker or
+ * matches a known example value.
+ */
+function isPlaceholder(value: string, denylist: Set<string>): boolean {
+  const normalized = value.toLowerCase();
+  return normalized.includes("replace-with") || denylist.has(normalized);
+}
+
+/**
  * Bootstrap the initial admin user — security-sensitive.
  *
  * Rules:
@@ -195,13 +214,19 @@ async function seedAdmin(): Promise<void> {
     return;
   }
 
+  if (isPlaceholder(email, PLACEHOLDER_ADMIN_EMAILS)) {
+    throw new Error(
+      "ADMIN_EMAIL is a known placeholder/example value — set a real email.",
+    );
+  }
+
   if (password.length < MIN_ADMIN_PASSWORD_LENGTH) {
     throw new Error(
       `ADMIN_PASSWORD must be at least ${MIN_ADMIN_PASSWORD_LENGTH} characters.`,
     );
   }
 
-  if (PLACEHOLDER_ADMIN_PASSWORDS.has(password.toLowerCase())) {
+  if (isPlaceholder(password, PLACEHOLDER_ADMIN_PASSWORDS)) {
     throw new Error(
       "ADMIN_PASSWORD is a known placeholder/example value — set a real secret.",
     );

@@ -82,6 +82,10 @@ readonly PLACEHOLDER_VALUES=(
 
 is_placeholder() {
   local value; value="$(printf '%s' "$1" | tr '[:upper:]' '[:lower:]')"
+  # Every shipped .env.example placeholder carries the "replace-with" marker.
+  case "$value" in
+    *replace-with*) return 0 ;;
+  esac
   local candidate
   for candidate in "${PLACEHOLDER_VALUES[@]}"; do
     [ "$value" = "$candidate" ] && return 0
@@ -107,6 +111,23 @@ preflight() {
       die "$ENV_FILE is missing a non-empty $key"
     fi
   done
+
+  # Core production secrets must not be left at placeholder/example values.
+  # NEXT_PUBLIC_SITE_URL is optional (compose defaults it), so it is only
+  # checked when present. Values are never printed.
+  local value
+  for key in POSTGRES_USER POSTGRES_PASSWORD POSTGRES_DB AUTH_SECRET NEXT_PUBLIC_SITE_URL; do
+    value="$(env_value "$key")"
+    if [ -n "$value" ] && is_placeholder "$value"; then
+      die "$key in $ENV_FILE is still a placeholder/example value — set a real one"
+    fi
+  done
+
+  # AUTH_SECRET strength: jose signing key must be at least 32 chars.
+  local auth_secret; auth_secret="$(env_value AUTH_SECRET)"
+  if [ "${#auth_secret}" -lt 32 ]; then
+    die "AUTH_SECRET must be at least 32 characters"
+  fi
 
   # Admin bootstrap must fail fast (before any change) when creds are missing
   # OR still set to a known placeholder/example value.
