@@ -93,9 +93,14 @@ is_placeholder() {
   return 1
 }
 
-# Read a key's value from the env file without printing it.
+# Read a key's value from the env file without printing it. Safe for missing
+# keys: returns an empty string and exit 0 even under `set -Eeuo pipefail`
+# (a bare grep miss would otherwise abort the script).
 env_value() {
-  grep -E "^$1=" "$ENV_FILE" | head -n1 | cut -d= -f2-
+  local line
+  line="$(grep -E "^$1=" "$ENV_FILE" 2>/dev/null | head -n1)" || true
+  # Strip the leading "KEY=", preserving any '=' inside the value.
+  printf '%s' "${line#*=}"
 }
 
 # --- preflight --------------------------------------------------------------
@@ -106,19 +111,19 @@ preflight() {
   [ -f "$ENV_FILE" ] || die "missing $ENV_FILE — copy .env.example and fill it in"
   docker info >/dev/null 2>&1 || die "cannot talk to the docker daemon"
   # Required keys must exist and be non-empty (values are never printed).
-  for key in POSTGRES_USER POSTGRES_PASSWORD POSTGRES_DB AUTH_SECRET; do
+  # NEXT_PUBLIC_SITE_URL is required in production: it drives canonical
+  # metadata/sitemap/robots, so a missing value would poison SEO.
+  for key in POSTGRES_USER POSTGRES_PASSWORD POSTGRES_DB AUTH_SECRET NEXT_PUBLIC_SITE_URL; do
     if ! grep -qE "^${key}=.+" "$ENV_FILE"; then
       die "$ENV_FILE is missing a non-empty $key"
     fi
   done
 
   # Core production secrets must not be left at placeholder/example values.
-  # NEXT_PUBLIC_SITE_URL is optional (compose defaults it), so it is only
-  # checked when present. Values are never printed.
   local value
   for key in POSTGRES_USER POSTGRES_PASSWORD POSTGRES_DB AUTH_SECRET NEXT_PUBLIC_SITE_URL; do
     value="$(env_value "$key")"
-    if [ -n "$value" ] && is_placeholder "$value"; then
+    if is_placeholder "$value"; then
       die "$key in $ENV_FILE is still a placeholder/example value — set a real one"
     fi
   done
@@ -128,6 +133,14 @@ preflight() {
   if [ "${#auth_secret}" -lt 32 ]; then
     die "AUTH_SECRET must be at least 32 characters"
   fi
+
+  # NEXT_PUBLIC_SITE_URL must be a public production URL, never a loopback one —
+  # a localhost canonical would break production metadata/sitemap/robots.
+  local site_url; site_url="$(env_value NEXT_PUBLIC_SITE_URL)"
+  case "$site_url" in
+    *localhost*|*127.0.0.1*|*0.0.0.0*)
+      die "NEXT_PUBLIC_SITE_URL must be a public production URL, not localhost/127.0.0.1/0.0.0.0" ;;
+  esac
 
   # Admin bootstrap must fail fast (before any change) when creds are missing
   # OR still set to a known placeholder/example value.

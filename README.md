@@ -34,8 +34,9 @@ POSTGRES_DB=replace-with-db-name
 #   openssl rand -base64 48
 AUTH_SECRET=replace-with-a-32-plus-character-secret
 
-# Public canonical URL (SEO/metadata).
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
+# Canonical public URL (SEO metadata / sitemap / robots). Production MUST be the
+# real domain — deploy.sh rejects localhost/127.0.0.1. Local dev: http://localhost:3000.
+NEXT_PUBLIC_SITE_URL=replace-with-production-url
 
 # Host port the web container publishes (container always listens on 3000).
 WEB_PORT=3000
@@ -56,7 +57,7 @@ ADMIN_PASSWORD=replace-with-a-strong-password
 | `POSTGRES_PASSWORD`    | db, app            | Use a strong value.                                          |
 | `POSTGRES_DB`          | db, app            | Database name.                                               |
 | `AUTH_SECRET`          | web                | Min 32 chars. Validated lazily server-side.                  |
-| `NEXT_PUBLIC_SITE_URL` | web (build/run)    | Canonical site URL.                                          |
+| `NEXT_PUBLIC_SITE_URL` | web (build/run)    | Canonical URL (SEO/sitemap/robots). Prod: real domain — deploy.sh rejects localhost. |
 | `WEB_PORT`             | web                | Host port → container `3000`. Defaults to `3000`.            |
 | `ADMIN_EMAIL`          | seed only          | Initial admin email. No committed default.                   |
 | `ADMIN_PASSWORD`       | seed only          | Initial admin password (min 8 chars). No committed default.  |
