@@ -1,0 +1,8 @@
+# Single-package repo. This file only holds pnpm settings (pnpm 11 moved
+# several package.json settings here). No `packages:` globs = not a monorepo.
+allowBuilds:
+  '@prisma/engines': true
+  esbuild: true
+  prisma: true
+  sharp: true
+  unrs-resolver: true

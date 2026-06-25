@@ -1,0 +1,20 @@
+node_modules
+.next
+.git
+.env
+.env.*
+!.env.example
+/backups
+*.log
+.DS_Store
+
+# Large local-only asset and doc folders (not part of the app)
+DOCUMENTACION
+WEB
+COMERCIAL
+.atl
+
+# Tooling
+.vscode
+.idea
+coverage

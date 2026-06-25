@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand palette — artisanal gourmet cheese shop */
+  --color-cream-50: #faf6ee;
+  --color-cream-100: #f5f0e6;
+  --color-charcoal: #1f1b16;
+  --color-ink: #111111;
+  --color-cheese: #e8b84b;
+  --color-cheese-deep: #d99a2b;
+  --color-brown: #6b4e3d;
+  --color-burgundy: #7b2d3a;
+  --color-olive: #6b7a4f;
+
+  /* Typography — wired from next/font in app/layout.tsx */
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--color-cream-50);
+  color: var(--color-charcoal);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  line-height: 1.15;
+}

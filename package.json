@@ -1,0 +1,53 @@
+{
+  "name": "la-queseria",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.7.0",
+  "engines": {
+    "node": ">=24.16.0 <25",
+    "pnpm": ">=11.7.0 <12"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "postinstall": "prisma generate --schema prisma/schema.prisma",
+    "prisma:validate": "prisma validate --schema prisma/schema.prisma",
+    "prisma:generate": "prisma generate --schema prisma/schema.prisma",
+    "prisma:migrate:dev": "prisma migrate dev --schema prisma/schema.prisma",
+    "prisma:deploy": "prisma migrate deploy --schema prisma/schema.prisma",
+    "db:seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "server-only": "^0.0.1",
+    "next": "16.2.9",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "@prisma/client": "7.8.0",
+    "@prisma/adapter-pg": "7.8.0",
+    "pg": "8.21.0",
+    "zod": "^4.4.3",
+    "zustand": "^5.0.14",
+    "@node-rs/argon2": "^2.0.2",
+    "jose": "^6",
+    "lucide-react": "^0.575.0",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3"
+  },
+  "devDependencies": {
+    "prisma": "7.8.0",
+    "typescript": "^5",
+    "@types/node": "^24",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19",
+    "@types/pg": "^8.11.10",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.9",
+    "tailwindcss": "^4.3.1",
+    "@tailwindcss/postcss": "^4.3.1",
+    "tsx": "^4.22.4"
+  }
+}

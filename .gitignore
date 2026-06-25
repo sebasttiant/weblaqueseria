@@ -1,0 +1,35 @@
+# dependencies
+node_modules
+.pnp
+.pnp.*
+
+# next.js
+.next
+out
+build
+
+# production
+/backups
+
+# environment
+.env
+.env.*
+!.env.example
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# misc
+.DS_Store
+*.pem
+coverage
+.vercel
+
+# typescript
+next-env.d.ts
+*.tsbuildinfo
+
+# generated
+/lib/generated

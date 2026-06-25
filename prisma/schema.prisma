@@ -1,0 +1,137 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  ADMIN
+  STAFF
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PREPARING
+  COMPLETED
+  CANCELLED
+}
+
+enum FulfillmentType {
+  PICKUP
+  DELIVERY
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  fullName     String?
+  role         UserRole @default(ADMIN)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([isActive])
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  imageUrl    String?
+  sortOrder   Int       @default(0)
+  isActive    Boolean   @default(true)
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([isActive])
+  @@index([sortOrder])
+}
+
+model Product {
+  id                 String              @id @default(cuid())
+  name               String
+  slug               String              @unique
+  description        String?
+  // Money stored as integer minor units. For COP (no subunit in practice)
+  // this holds the whole-peso value directly. Nullable -> "precio opcional".
+  priceCents         Int?
+  currency           String              @default("COP")
+  imageUrl           String?
+  images             String[]            @default([])
+  categoryId         String
+  category           Category            @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  isActive           Boolean             @default(true)
+  isFeatured         Boolean             @default(false)
+  sortOrder          Int                 @default(0)
+  stock              Int?
+  sku                String?
+  orderItems         OrderItem[]
+  inventoryMovements InventoryMovement[]
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+
+  @@index([categoryId])
+  @@index([isActive])
+  @@index([isFeatured])
+  @@index([slug])
+}
+
+model Order {
+  id            String          @id @default(cuid())
+  orderNumber   String          @unique
+  customerName  String
+  customerPhone String
+  customerEmail String?
+  customerNote  String?
+  fulfillment   FulfillmentType @default(PICKUP)
+  address       String?
+  status        OrderStatus     @default(PENDING)
+  subtotalCents Int             @default(0)
+  totalCents    Int             @default(0)
+  currency      String          @default("COP")
+  items         OrderItem[]
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id             String   @id @default(cuid())
+  orderId        String
+  order          Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId      String?
+  product        Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  productName    String
+  unitPriceCents Int?
+  quantity       Int      @default(1)
+  lineTotalCents Int?
+  createdAt      DateTime @default(now())
+
+  @@index([orderId])
+}
+
+model Setting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model InventoryMovement {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  delta     Int
+  reason    String
+  createdAt DateTime @default(now())
+
+  @@index([productId])
+}
