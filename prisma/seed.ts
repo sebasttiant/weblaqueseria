@@ -138,30 +138,85 @@ async function seedCategories(): Promise<Map<string, string>> {
 }
 
 async function seedSettings(): Promise<void> {
+  // Create-only: settings are managed from the admin panel after the first
+  // run. Re-seeding must NEVER overwrite operator-edited values in production,
+  // so existing keys are left untouched (only missing keys are inserted).
   for (const setting of SETTINGS) {
-    await prisma.setting.upsert({
+    const existing = await prisma.setting.findUnique({
       where: { key: setting.key },
-      update: { value: setting.value },
-      create: { key: setting.key, value: setting.value },
     });
+    if (!existing) {
+      await prisma.setting.create({
+        data: { key: setting.key, value: setting.value },
+      });
+    }
   }
 }
 
-async function seedAdmin(): Promise<void> {
-  const email = process.env["ADMIN_EMAIL"] ?? "admin@laqueseria.co";
-  const password = process.env["ADMIN_PASSWORD"] ?? "change-me-locally";
-  const passwordHash = await hashPassword(password);
+const MIN_ADMIN_PASSWORD_LENGTH = 8;
 
-  await prisma.user.upsert({
-    where: { email },
-    update: { passwordHash, isActive: true },
-    create: {
-      email,
-      passwordHash,
-      fullName: "Administrador",
-      role: "ADMIN",
-    },
-  });
+/**
+ * Bootstrap the initial admin user — security-sensitive.
+ *
+ * Rules:
+ *  - Credentials come ONLY from ADMIN_EMAIL / ADMIN_PASSWORD env vars. There
+ *    are no committed default credentials.
+ *  - If they are not set, admin bootstrap is skipped (the rest of the seed
+ *    still runs). Production stays without an admin until one is provisioned.
+ *  - If the admin does not exist, it is created.
+ *  - If the admin already exists, its password is LEFT UNCHANGED, unless
+ *    FORCE_ADMIN_PASSWORD_RESET=1 is explicitly provided.
+ *  - The password is never logged.
+ */
+async function seedAdmin(): Promise<void> {
+  const email = process.env["ADMIN_EMAIL"]?.trim();
+  const password = process.env["ADMIN_PASSWORD"];
+  const forceReset = process.env["FORCE_ADMIN_PASSWORD_RESET"] === "1";
+
+  if (!email || !password) {
+    console.log(
+      "[seed] ADMIN_EMAIL/ADMIN_PASSWORD not set — skipping admin bootstrap.",
+    );
+    return;
+  }
+
+  if (password.length < MIN_ADMIN_PASSWORD_LENGTH) {
+    throw new Error(
+      `ADMIN_PASSWORD must be at least ${MIN_ADMIN_PASSWORD_LENGTH} characters.`,
+    );
+  }
+
+  const existing = await prisma.user.findUnique({ where: { email } });
+
+  if (!existing) {
+    await prisma.user.create({
+      data: {
+        email,
+        passwordHash: await hashPassword(password),
+        fullName: "Administrador",
+        role: "ADMIN",
+        isActive: true,
+      },
+    });
+    console.log(`[seed] created admin user ${email}.`);
+    return;
+  }
+
+  if (forceReset) {
+    await prisma.user.update({
+      where: { email },
+      data: { passwordHash: await hashPassword(password), isActive: true },
+    });
+    console.log(
+      `[seed] FORCE_ADMIN_PASSWORD_RESET=1 — reset password for ${email}.`,
+    );
+    return;
+  }
+
+  console.log(
+    `[seed] admin ${email} already exists — password unchanged ` +
+      "(set FORCE_ADMIN_PASSWORD_RESET=1 to reset it).",
+  );
 }
 
 async function seedProducts(categoryIds: Map<string, string>): Promise<void> {
@@ -201,7 +256,7 @@ async function main(): Promise<void> {
   await seedSettings();
   await seedAdmin();
   await seedProducts(categoryIds);
-  console.log("Seed completed: categories, settings, admin user, products.");
+  console.log("[seed] completed: categories, settings, products (admin per env).");
 }
 
 main()

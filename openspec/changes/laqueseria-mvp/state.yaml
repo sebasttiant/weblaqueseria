@@ -10,11 +10,18 @@ layers:
   data: done
   public_site: done
   admin_auth: done
-  docker_vps_ci: pending     # RESUME HERE (Layer 5)
-  verification: pending
+  docker_vps_ci: done        # Dockerfile + compose + deploy.sh + CI + README
+  verification: done         # initial migration created; full Docker stack smoke-tested green
 gates:
   typecheck: green
   lint: green
   build: green
-  docker_build: not-run
-resume_command_hint: "On 'retomemos el proyecto' -> read this file + tasks.md, start Layer 5 (Docker/VPS/CI/deploy.sh)."
+  docker_build: green        # runner/migrator/seeder all build; live stack smoke: /api/health 200
+security_hardening:
+  admin_bootstrap: env-only (ADMIN_EMAIL/ADMIN_PASSWORD), create-only, no reset unless FORCE_ADMIN_PASSWORD_RESET=1
+  seeding: off by default in deploy.sh; seed service behind compose `seed` profile
+  settings_seed: create-only (never overwrites operator-edited values)
+  ci_audit: pnpm audit --audit-level=high is now blocking (no `|| true`)
+remaining:
+  - "Push to GitHub (no remote configured in this clone yet)"
+resume_command_hint: "MVP complete and Docker-verified. Next: add git remote + push so CI runs."

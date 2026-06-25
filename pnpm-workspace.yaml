@@ -1,5 +1,11 @@
 # Single-package repo. This file only holds pnpm settings (pnpm 11 moved
 # several package.json settings here). No `packages:` globs = not a monorepo.
+#
+# pnpm 11 denies dependency build scripts by default. These are trusted and
+# MUST run: sharp (image optimization) and esbuild (tsx) need their native
+# binaries, and prisma generates the client. pnpm 11.7 enforces `allowBuilds`
+# (map form) — `onlyBuiltDependencies` is read but not enforced in this
+# version, so an unbuilt esbuild/sharp would fail at runtime.
 allowBuilds:
   '@prisma/engines': true
   esbuild: true

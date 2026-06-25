@@ -1,0 +1,87 @@
+schema: spec-driven
+
+project: weblaqueseria
+artifact_store: hybrid
+created: 2026-06-25
+
+context: |
+  Tech stack: Next.js 16.2.9 App Router, React 19.2.7, TypeScript strict, Tailwind CSS 4.3, Prisma 7.8 with PostgreSQL adapter, Zod 4, Zustand 5, jose, argon2.
+  Package manager: pnpm 11.7.0; Node >=24.16.0 <25; single-package repository (pnpm-workspace has settings only, no package globs).
+  Architecture: app routes in app/, reusable UI/layout/product/admin components in components/, data/actions/auth/db/config/store helpers in lib/, Prisma schema and seed in prisma/.
+  Testing: no test runner configured; quality gates are pnpm lint, pnpm typecheck, and pnpm build.
+  Delivery: Next standalone output is enabled; Docker and CI files are not yet present and are tracked as pending MVP Layer 5 work.
+
+strict_tdd: false
+
+execution:
+  mode: auto
+  chained_pr_strategy: force-chained
+  review_budget_changed_lines: 400
+  language_domain_contract: Generated technical artifacts default to English. Public UI copy may follow project context; Spanish public copy should be neutral/professional Spanish.
+
+testing:
+  strict_tdd: false
+  reason: No test runner or test script is configured in package.json, and no test/spec files or Vitest/Jest/Playwright/Cypress config were detected.
+  test_command: ""
+  framework: none
+  layers:
+    unit:
+      available: false
+      tool: ""
+    integration:
+      available: false
+      tool: ""
+    e2e:
+      available: false
+      tool: ""
+  coverage:
+    available: false
+    command: ""
+  quality:
+    lint:
+      available: true
+      command: pnpm lint
+    typecheck:
+      available: true
+      command: pnpm typecheck
+    build:
+      available: true
+      command: pnpm build
+    format:
+      available: false
+      command: ""
+    prisma_validate:
+      available: true
+      command: pnpm prisma:validate
+
+rules:
+  proposal:
+    - State review slice boundaries and respect the 400 changed-line review budget.
+    - Include rollback notes for delivery, database, authentication, or deployment changes.
+  specs:
+    - Use RFC 2119 keywords for requirements.
+    - Use Given/When/Then for scenarios.
+    - Preserve the language domain contract: technical artifacts in English; Spanish public UI copy only when project context requires it.
+  design:
+    - Prefer existing App Router, Server Actions, Prisma, Zod, and component conventions.
+    - Document Docker, CI, auth, or data model tradeoffs explicitly.
+  tasks:
+    - Group work into reviewable chained PR slices under 400 changed lines where practical.
+    - Keep quality gates with the code they validate.
+  apply:
+    - Follow existing code patterns and do not introduce a test-first gate until a test runner exists.
+    tdd: false
+    test_command: ""
+    quality_commands:
+      - pnpm lint
+      - pnpm typecheck
+      - pnpm build
+  verify:
+    test_command: ""
+    build_command: pnpm build
+    lint_command: pnpm lint
+    typecheck_command: pnpm typecheck
+    coverage_threshold: 0
+  archive:
+    - Preserve existing openspec change history under openspec/changes/.
+    - Sync final specs and Engram artifacts when a change is completed.
