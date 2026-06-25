@@ -1,6 +1,7 @@
 # La Quesería
 
 Production website + admin for an artisanal cheese & sourdough gourmet shop.
+Página web y ecommerce para La Quesería Plaza La América.
 "Todo comenzó con una Cuajada."
 
 Next.js 16 (App Router) · React 19 · TypeScript · Tailwind 4 · Prisma 7 +
