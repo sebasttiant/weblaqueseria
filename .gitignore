@@ -36,3 +36,8 @@ next-env.d.ts
 
 # local agent tooling
 .atl
+
+# per-machine docker overrides (e.g. forcing build network: host when the local
+# Docker bridge can't reach the registry). Kept local — must not affect the VPS.
+docker-compose.override.yml
+docker-compose.override.yaml
