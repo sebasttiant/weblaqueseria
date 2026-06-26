@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" role="img" aria-label="Gastronomía europea">
+  <defs>
+    <radialGradient id="bgE" cx="40%" cy="33%" r="85%">
+      <stop offset="0%" stop-color="#f6f4e4"/>
+      <stop offset="55%" stop-color="#e2e3c2"/>
+      <stop offset="100%" stop-color="#b6bd86"/>
+    </radialGradient>
+    <linearGradient id="oilE" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#cdd06a"/>
+      <stop offset="100%" stop-color="#9aa23f"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="600" fill="url(#bgE)"/>
+  <g opacity="0.4" fill="#9aa15f">
+    <circle cx="95" cy="110" r="5"/><circle cx="505" cy="125" r="6"/><circle cx="500" cy="485" r="5"/><circle cx="100" cy="490" r="6"/>
+  </g>
+  <g transform="translate(300 300)">
+    <ellipse cx="0" cy="170" rx="150" ry="26" fill="#000" opacity="0.10"/>
+    <!-- bottle -->
+    <path d="M-44 -160 h88 v34 q0 18 14 34 l10 12 q14 18 14 44 v176 q0 26 -26 26 h-112 q-26 0 -26 -26 v-176 q0 -26 14 -44 l10 -12 q14 -16 14 -34 z"
+          fill="url(#oilE)" stroke="#6f7526" stroke-width="7" stroke-linejoin="round"/>
+    <rect x="-44" y="-188" width="88" height="32" rx="8" fill="#5d6320" stroke="#43471a" stroke-width="6"/>
+    <rect x="-58" y="20" width="116" height="120" rx="10" fill="#f7f3df" opacity="0.92" stroke="#cdc9ad" stroke-width="3"/>
+    <text x="0" y="74" text-anchor="middle" font-family="Georgia, serif" font-size="30" fill="#6f7526" font-weight="700">EVOO</text>
+    <text x="0" y="104" text-anchor="middle" font-family="Georgia, serif" font-size="15" fill="#7a4a2c">Virgen Extra</text>
+    <!-- olive branch -->
+    <g transform="translate(120 -120)" stroke="#5d6320" stroke-width="5" fill="#7c8a35">
+      <path d="M0 0 q40 30 70 18" fill="none"/>
+      <ellipse cx="24" cy="6" rx="11" ry="6" transform="rotate(25 24 6)"/>
+      <ellipse cx="52" cy="16" rx="11" ry="6" transform="rotate(20 52 16)"/>
+      <circle cx="70" cy="18" r="9" fill="#4f5a23" stroke="none"/>
+    </g>
+  </g>
+</svg>

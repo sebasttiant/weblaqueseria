@@ -11,6 +11,8 @@
   --color-brown: #6b4e3d;
   --color-burgundy: #7b2d3a;
   --color-olive: #6b7a4f;
+  --color-gold: #c8962b;
+  --color-cream-200: #ece3d1;
 
   /* Typography — wired from next/font in app/layout.tsx */
   --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;

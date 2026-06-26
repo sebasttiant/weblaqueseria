@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" role="img" aria-label="Pan de masa madre">
+  <defs>
+    <radialGradient id="bgM" cx="40%" cy="34%" r="85%">
+      <stop offset="0%" stop-color="#fbf1e2"/>
+      <stop offset="55%" stop-color="#f0dcc0"/>
+      <stop offset="100%" stop-color="#d9b489"/>
+    </radialGradient>
+    <radialGradient id="crustM" cx="42%" cy="34%" r="75%">
+      <stop offset="0%" stop-color="#e3aa61"/>
+      <stop offset="70%" stop-color="#c2823c"/>
+      <stop offset="100%" stop-color="#8f5a27"/>
+    </radialGradient>
+  </defs>
+  <rect width="600" height="600" fill="url(#bgM)"/>
+  <g opacity="0.45" fill="#c79a64">
+    <circle cx="90" cy="110" r="5"/><circle cx="510" cy="130" r="6"/><circle cx="500" cy="480" r="5"/><circle cx="100" cy="490" r="6"/>
+  </g>
+  <g transform="translate(300 318)">
+    <ellipse cx="0" cy="120" rx="190" ry="34" fill="#000" opacity="0.10"/>
+    <ellipse cx="0" cy="10" rx="200" ry="150" fill="url(#crustM)" stroke="#7a4a20" stroke-width="7"/>
+    <g stroke="#6f421d" stroke-width="9" stroke-linecap="round" fill="none" opacity="0.85">
+      <path d="M-120 -36 Q0 -86 120 -36"/>
+      <path d="M-150 8 Q0 -44 150 8"/>
+      <path d="M-138 54 Q0 8 138 54"/>
+    </g>
+    <g fill="#f4dcae" opacity="0.9">
+      <circle cx="-60" cy="-58" r="6"/><circle cx="44" cy="-66" r="5"/><circle cx="120" cy="-12" r="6"/><circle cx="-130" cy="-6" r="5"/>
+    </g>
+  </g>
+</svg>
