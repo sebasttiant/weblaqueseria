@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { MapPin, Clock, Instagram } from "lucide-react";
 import { Container } from "@/components/ui/Container";
@@ -22,7 +23,17 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3">
           {/* Brand */}
           <div className="flex flex-col gap-4">
-            <div>
+            <div className="flex items-center gap-3">
+              <span className="relative h-14 w-14 overflow-hidden rounded-full bg-cream-50">
+                <Image
+                  src="/images/brand/la-queseria-emblem.png"
+                  alt="La Quesería"
+                  fill
+                  sizes="56px"
+                  className="object-contain p-2"
+                />
+              </span>
+              <div>
               <h2
                 className="text-2xl font-semibold text-cream-50"
                 style={{ fontFamily: "var(--font-display)" }}
@@ -30,6 +41,7 @@ export function Footer() {
                 La Quesería
               </h2>
               <p className="text-sm text-cheese">Quesos &amp; Masa Madre</p>
+              </div>
             </div>
             <p className="max-w-xs text-sm leading-relaxed text-cream-100/70">
               {SITE.slogan}. Productos artesanales de origen europeo y local,
@@ -69,14 +81,14 @@ export function Footer() {
           {/* CTA */}
           <div className="flex flex-col gap-4">
             <h3 className="text-sm font-semibold uppercase tracking-widest text-cheese">
-              Hacé tu pedido
+              Haz tu pedido
             </h3>
             <p className="text-sm text-cream-100/70">
-              Escribinos directamente por WhatsApp para hacer tu pedido o
+              Escríbenos directamente por WhatsApp para hacer tu pedido o
               consultar disponibilidad.
             </p>
             <ButtonLink
-              href={whatsappLink("Hola! Quiero hacer un pedido.")}
+              href={whatsappLink("Hola, quiero hacer un pedido.")}
               target="_blank"
               rel="noopener noreferrer"
               size="sm"

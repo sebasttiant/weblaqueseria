@@ -1,4 +1,5 @@
 import { Container } from "@/components/ui/Container";
+import { Reveal } from "@/components/motion/Reveal";
 import { Award, Leaf, Globe, Sparkles } from "lucide-react";
 
 const DIFFERENTIATORS = [
@@ -35,17 +36,21 @@ export function DifferentiatorsSection() {
       aria-labelledby="differentiators-heading"
     >
       <Container>
-        <div className="mb-12 text-center">
+        <Reveal className="mx-auto mb-12 max-w-3xl text-center">
           <p className="text-sm font-medium uppercase tracking-widest text-cheese">
-            Por qué elegirnos
+            De la cava a tu mesa
           </p>
           <h2
             id="differentiators-heading"
             className="mt-2 text-3xl font-semibold text-cream-50 sm:text-4xl"
           >
-            Lo que nos hace diferentes
+            Selección cuidada para comprar con confianza
           </h2>
-        </div>
+          <p className="mt-4 text-cream-100/65">
+            No se trata de llenar una vitrina: elegimos productos con origen,
+            rotación y sabor para que cada pedido llegue listo para disfrutar.
+          </p>
+        </Reveal>
 
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {DIFFERENTIATORS.map(({ icon: Icon, title, description }) => (

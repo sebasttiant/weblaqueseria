@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { ProductCard } from "@/components/product/ProductCard";
+import { Reveal } from "@/components/motion/Reveal";
+import { StaggeredProducts } from "@/components/motion/StaggeredProducts";
 import type { ProductWithCategory } from "@/lib/data/products";
 
 interface FeaturedProductsSectionProps {
@@ -15,14 +17,18 @@ export function FeaturedProductsSection({
   return (
     <section className="py-20" aria-labelledby="featured-heading">
       <Container>
-        <div className="mb-12 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <Reveal className="mb-12 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-sm font-medium uppercase tracking-widest text-cheese-deep">
-              Selección especial
+              Favoritos de la casa
             </p>
             <h2 id="featured-heading" className="mt-2 text-3xl font-semibold text-charcoal sm:text-4xl">
-              Productos destacados
+              Lo que más provoca llevar a la mesa
             </h2>
+            <p className="mt-3 max-w-2xl text-brown/70">
+              Una selección curada para resolver una tabla elegante, un desayuno
+              especial o un detalle gastronómico con sabor artesanal.
+            </p>
           </div>
           <Link
             href="/productos"
@@ -30,13 +36,13 @@ export function FeaturedProductsSection({
           >
             Ver todo el catálogo →
           </Link>
-        </div>
+        </Reveal>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <StaggeredProducts className="grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
-        </div>
+        </StaggeredProducts>
       </Container>
     </section>
   );

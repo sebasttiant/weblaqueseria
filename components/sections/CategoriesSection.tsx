@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChefHat } from "lucide-react";
 import { Container } from "@/components/ui/Container";
+import { Reveal } from "@/components/motion/Reveal";
 import type { Category } from "@prisma/client";
 
 interface CategoriesSectionProps {
@@ -14,17 +15,22 @@ export function CategoriesSection({ categories }: CategoriesSectionProps) {
   return (
     <section className="bg-cream-100 py-20" aria-labelledby="categories-heading">
       <Container>
-        <div className="mb-12 text-center">
+        <Reveal className="mx-auto mb-12 max-w-3xl text-center">
           <p className="text-sm font-medium uppercase tracking-widest text-cheese-deep">
-            Nuestras familias
+            Arma tu tabla
           </p>
           <h2
             id="categories-heading"
             className="mt-2 text-3xl font-semibold text-charcoal sm:text-4xl"
           >
-            Explora por categoría
+            Combina sabores, texturas y panes artesanales
           </h2>
-        </div>
+          <p className="mt-4 text-brown/70">
+            Empieza por una familia de producto y construye una experiencia:
+            quesos intensos, charcutería, untables, pan de masa madre y detalles
+            para acompañar.
+          </p>
+        </Reveal>
 
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {categories.map((cat) => (

@@ -10,7 +10,10 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   return (
-    <article className="group flex flex-col overflow-hidden rounded-3xl border border-brown/10 bg-cream-50 shadow-sm ring-1 ring-transparent transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:ring-cheese/40">
+    <article
+      data-product-card
+      className="group flex flex-col overflow-hidden rounded-3xl border border-brown/10 bg-cream-50 shadow-sm ring-1 ring-transparent transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:ring-cheese/40"
+    >
       <Link
         href={`/productos/${product.slug}`}
         tabIndex={-1}

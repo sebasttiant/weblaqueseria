@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Search } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { ProductCard } from "@/components/product/ProductCard";
+import { StaggeredProducts } from "@/components/motion/StaggeredProducts";
 import { getActiveProducts } from "@/lib/data/products";
 import { getActiveCategories } from "@/lib/data/categories";
 import { cn } from "@/lib/utils/cn";
@@ -138,11 +139,11 @@ export default async function ProductosPage({ searchParams }: PageProps) {
                 categories.find((c) => c.slug === categorySlug) &&
                 ` en ${categories.find((c) => c.slug === categorySlug)!.name}`}
             </p>
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <StaggeredProducts className="grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {products.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
-            </div>
+            </StaggeredProducts>
           </>
         )}
       </Container>

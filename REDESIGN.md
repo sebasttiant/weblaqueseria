@@ -1,7 +1,8 @@
 # Premium Redesign — progress (for audit)
 
-Status: **foundation + product imagery shipped and validated.** The rest of the
-public-site visual pass is scoped below and not yet done.
+Status: **public-site premium visual pass implemented and awaiting/under final
+validation.** Admin, auth, cart, orders, Docker and deploy files were intentionally
+left untouched.
 
 ## Visual strategy
 The DOCUMENTACION assets are **brand logos + a store-sign photo + an Instagram
@@ -12,7 +13,7 @@ brand mark, the real store photo, first-party **SVG category illustrations**
 Real product photos can later be dropped at `/images/products/` and they take
 over automatically (seed + `ProductImage` already resolve photo-first).
 
-## Done (commits 68e9497, fa2a62a)
+## Done (commits 68e9497, fa2a62a + current polish pass)
 - **Assets copied** (no external hotlinks):
   - `public/images/brand/la-queseria-logo.png`  ← DOCUMENTACION/2.png
   - `public/images/brand/la-queseria-emblem.png` ← DOCUMENTACION/4.png
@@ -28,11 +29,34 @@ over automatically (seed + `ProductImage` already resolve photo-first).
 - `next.config.ts` — safe SVG optimization (CSP + attachment).
 - `app/globals.css` — added `--color-gold`, `--color-cream-200`.
 - `animejs@4.5.0` installed (for motion, not wired yet).
+- Motion wired through React-safe client components:
+  - `components/motion/Reveal.tsx`
+  - `components/motion/HeroMotion.tsx`
+  - `components/motion/StaggeredProducts.tsx`
+  These use Anime.js v4 `createScope`, `animate`, `stagger`, cleanup via
+  `scope.current?.revert()`, and respect `prefers-reduced-motion`.
+- Home hero rebuilt with a premium dark editorial layout, dual CTA, trust chips,
+  store-sign photo, brand logo/emblem, and local category illustration accents.
+- Home sections refreshed:
+  - `Favoritos de la casa` featured grid with staggered products.
+  - `Arma tu tabla` category section.
+  - `De la cava a tu mesa` differentiators section.
+  - `Masa madre` editorial story block.
+  - `Visítanos` location block with real store-sign image.
+- Header/footer enriched with local emblem/logo treatment, active public nav
+  state, stronger CTA copy, and professional Spanish copy.
+- Contact page rebuilt with warm imagery, stronger WhatsApp panel, Instagram and
+  visit cards, and store-sign image instead of a plain placeholder.
+- Product detail now uses `ProductImage`, stronger purchase layout, serving
+  suggestion panels, resolved cart image fallback, and related products by
+  category when available.
 
 ## Commands run
 - `pnpm lint` → pass
 - `pnpm typecheck` → pass
-- `pnpm build` → pass
+- `pnpm build` → pass when run with build-time `DATABASE_URL` and
+  `NEXT_PUBLIC_SITE_URL` placeholders. Without `DATABASE_URL`, build fails during
+  `/sitemap.xml` page-data collection due existing env validation.
 
 ## Docker — skipped (intentional)
 Skipped on purpose: (1) this redesign touched **no** Docker/compose/Dockerfile
@@ -41,20 +65,13 @@ full image build is heavy and this machine's Docker **bridge network can't reach
 the registry** — it needs the local `docker-compose.override.yml` (build:
 network: host) workaround. Non-Docker gates are green.
 
-## Remaining (next session)
-Still on the OLD design (functional, not broken):
-- **Motion** components (`Reveal`, `HeroMotion`, `StaggeredProducts`) — animejs
-  v4 `createScope`/`animate`/`stagger`, respect `prefers-reduced-motion`.
-- **Hero** rebuild (collage w/ logo + store sign + illustrations, new headline,
-  trust chips, dual CTA).
-- **Sections**: Featured ("Favoritos de la casa"), "Arma tu tabla", "De la cava
-  a tu mesa", "Masa madre", Location ("Visítanos") with store-sign photo.
-- **Header/Footer**: logo treatment, active nav state, richer footer.
-- **Contact page**: warm imagery, bigger WhatsApp, stronger panels.
-- **Product detail** (`app/productos/[slug]/page.tsx`): large image via
-  `ProductImage`, serving suggestion, related products (still has its own
-  image fallback — wire `ProductImage` to remove any blank there too).
-- Admin: leave as-is.
+## Remaining / follow-up
+- Replace category illustrations with real product photography when available;
+  the current implementation remains first-party/local and has no blank product
+  placeholders.
+- Manual browser review recommended for final spacing and animation feel on home,
+  `/productos`, `/productos/[slug]`, and `/contacto`.
+- Admin remains intentionally unchanged.
 
 ## Manual review
 - `/productos` and home featured grid — confirm cards show category tiles, hover

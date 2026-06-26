@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useSyncExternalStore } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ShoppingBag, Menu, X } from "lucide-react";
@@ -42,12 +43,24 @@ export function Header() {
       <Container>
         <div className="flex h-16 items-center justify-between">
           {/* Brand */}
-          <Link href="/" className="flex flex-col leading-tight">
-            <span className="font-semibold text-charcoal" style={{ fontFamily: "var(--font-display)" }}>
-              La Quesería
+          <Link href="/" className="flex items-center gap-3 leading-tight">
+            <span className="relative flex h-11 w-11 overflow-hidden rounded-full bg-cream-100 ring-1 ring-brown/10">
+              <Image
+                src="/images/brand/la-queseria-emblem.png"
+                alt="La Quesería"
+                fill
+                sizes="44px"
+                className="object-contain p-1.5"
+                priority
+              />
             </span>
-            <span className="text-xs tracking-wide text-brown/70">
-              Quesos &amp; Masa Madre
+            <span className="flex flex-col">
+              <span className="font-semibold text-charcoal" style={{ fontFamily: "var(--font-display)" }}>
+                La Quesería
+              </span>
+              <span className="text-xs tracking-wide text-brown/70">
+                Quesos &amp; Masa Madre
+              </span>
             </span>
           </Link>
 
@@ -57,7 +70,12 @@ export function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-sm font-medium text-charcoal/80 transition-colors hover:text-charcoal"
+                className={cn(
+                  "rounded-full px-3 py-2 text-sm font-medium transition-colors hover:text-charcoal",
+                  pathname === link.href
+                    ? "bg-cheese/15 text-charcoal"
+                    : "text-charcoal/75",
+                )}
               >
                 {link.label}
               </Link>
@@ -113,7 +131,12 @@ export function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-sm font-medium text-charcoal/80 hover:text-charcoal"
+                 className={cn(
+                   "rounded-full px-3 py-2 text-sm font-medium hover:text-charcoal",
+                   pathname === link.href
+                     ? "bg-cheese/15 text-charcoal"
+                     : "text-charcoal/80",
+                 )}
                 onClick={() => setMenuOpen(false)}
               >
                 {link.label}

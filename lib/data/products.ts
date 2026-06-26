@@ -63,3 +63,26 @@ export async function getProductBySlug(
     return null;
   }
 }
+
+export async function getRelatedProducts(
+  categoryId: string,
+  excludeProductId: string,
+  limit = 3,
+): Promise<ProductWithCategory[]> {
+  try {
+    const prisma = getPrisma();
+    return await prisma.product.findMany({
+      where: {
+        categoryId,
+        isActive: true,
+        id: { not: excludeProductId },
+      },
+      include: { category: true },
+      orderBy: [{ isFeatured: "desc" }, { sortOrder: "asc" }, { createdAt: "desc" }],
+      take: limit,
+    });
+  } catch (error) {
+    console.error("[getRelatedProducts]", error);
+    return [];
+  }
+}
