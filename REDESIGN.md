@@ -28,7 +28,7 @@ over automatically (seed + `ProductImage` already resolve photo-first).
 - `prisma/seed.ts` — products carry local `/images/products/<category>.svg`.
 - `next.config.ts` — safe SVG optimization (CSP + attachment).
 - `app/globals.css` — added `--color-gold`, `--color-cream-200`.
-- `animejs@4.5.0` installed (for motion, not wired yet).
+- `animejs@4.5.0` installed and wired into scoped client motion components.
 - Motion wired through React-safe client components:
   - `components/motion/Reveal.tsx`
   - `components/motion/HeroMotion.tsx`

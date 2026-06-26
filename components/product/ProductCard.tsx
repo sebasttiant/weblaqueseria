@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { formatPriceCOP } from "@/lib/utils/format";
 import { AddToCartButton } from "@/components/product/AddToCartButton";
-import { ProductImage } from "@/components/product/ProductImage";
+import {
+  ProductImage,
+  resolveProductImage,
+} from "@/components/product/ProductImage";
 import type { ProductWithCategory } from "@/lib/data/products";
 
 interface ProductCardProps {
@@ -9,6 +12,11 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+  const resolvedImageUrl = resolveProductImage(
+    product.imageUrl,
+    product.category.slug,
+  );
+
   return (
     <article
       data-product-card
@@ -54,7 +62,7 @@ export function ProductCard({ product }: ProductCardProps) {
           slug={product.slug}
           name={product.name}
           priceCents={product.priceCents}
-          imageUrl={product.imageUrl}
+          imageUrl={resolvedImageUrl}
           size="sm"
           className="mt-1 w-full"
         />
