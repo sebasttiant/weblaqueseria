@@ -272,12 +272,16 @@ async function seedProducts(categoryIds: Map<string, string>): Promise<void> {
       throw new Error(`Missing category for slug "${product.categorySlug}"`);
     }
     const slug = slugify(product.name);
+    // Local, first-party category illustration (no external assets). Real
+    // per-product photos can later be dropped at /images/products/ and set here.
+    const imageUrl = `/images/products/${product.categorySlug}.svg`;
     await prisma.product.upsert({
       where: { slug },
       update: {
         name: product.name,
         description: product.description,
         priceCents: product.priceCents,
+        imageUrl,
         categoryId,
         isFeatured: product.isFeatured,
         sortOrder: product.sortOrder,
@@ -289,6 +293,7 @@ async function seedProducts(categoryIds: Map<string, string>): Promise<void> {
         description: product.description,
         priceCents: product.priceCents,
         currency: "COP",
+        imageUrl,
         categoryId,
         isFeatured: product.isFeatured,
         sortOrder: product.sortOrder,

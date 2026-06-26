@@ -1,8 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
-import { ChefHat } from "lucide-react";
 import { formatPriceCOP } from "@/lib/utils/format";
 import { AddToCartButton } from "@/components/product/AddToCartButton";
+import { ProductImage } from "@/components/product/ProductImage";
 import type { ProductWithCategory } from "@/lib/data/products";
 
 interface ProductCardProps {
@@ -11,37 +10,37 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   return (
-    <article className="group flex flex-col overflow-hidden rounded-2xl border border-brown/10 bg-cream-50 shadow-sm transition-shadow hover:shadow-md">
-      {/* Image */}
-      <Link href={`/productos/${product.slug}`} tabIndex={-1} aria-hidden="true">
-        <div className="relative aspect-square overflow-hidden bg-cream-100">
-          {product.imageUrl ? (
-            <Image
-              src={product.imageUrl}
-              alt={product.name}
-              fill
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              className="object-cover transition-transform duration-300 group-hover:scale-105"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center">
-              <ChefHat size={48} className="text-brown/20" aria-hidden="true" />
-            </div>
-          )}
-        </div>
+    <article className="group flex flex-col overflow-hidden rounded-3xl border border-brown/10 bg-cream-50 shadow-sm ring-1 ring-transparent transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:ring-cheese/40">
+      <Link
+        href={`/productos/${product.slug}`}
+        tabIndex={-1}
+        aria-hidden="true"
+        className="relative block aspect-square overflow-hidden"
+      >
+        <ProductImage
+          imageUrl={product.imageUrl}
+          categorySlug={product.category.slug}
+          alt={product.name}
+        />
+        <span className="absolute left-3 top-3 rounded-full bg-charcoal/85 px-3 py-1 text-xs font-medium uppercase tracking-wide text-cream-50 backdrop-blur-sm">
+          {product.category.name}
+        </span>
       </Link>
 
-      {/* Info */}
-      <div className="flex flex-1 flex-col gap-2 p-4">
-        <p className="text-xs font-medium uppercase tracking-wide text-cheese-deep">
-          {product.category.name}
-        </p>
+      <div className="flex flex-1 flex-col gap-2 p-5">
         <Link href={`/productos/${product.slug}`}>
-          <h3 className="line-clamp-2 text-base font-semibold leading-snug text-charcoal transition-colors hover:text-brown">
+          <h3 className="line-clamp-2 font-display text-lg font-semibold leading-snug text-charcoal transition-colors group-hover:text-cheese-deep">
             {product.name}
           </h3>
         </Link>
-        <p className="mt-auto pt-2 text-lg font-semibold text-charcoal">
+
+        {product.description && (
+          <p className="line-clamp-2 text-sm leading-relaxed text-brown/70">
+            {product.description}
+          </p>
+        )}
+
+        <p className="mt-auto pt-3 text-xl font-semibold text-charcoal">
           {product.priceCents !== null
             ? formatPriceCOP(product.priceCents)
             : "Consultar precio"}
@@ -54,7 +53,7 @@ export function ProductCard({ product }: ProductCardProps) {
           priceCents={product.priceCents}
           imageUrl={product.imageUrl}
           size="sm"
-          className="w-full"
+          className="mt-1 w-full"
         />
       </div>
     </article>
